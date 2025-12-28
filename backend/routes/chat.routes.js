@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
 
     const systemPrompt = {
       role: "system",
-      content: ``
+      content: `You are a helpful support agent for a small e-commerce store which provides a wide range of products and all types of delivery services. Generate short and concrete results in simple paragraph format.`
     };
 
     const response = await llm.invoke([
