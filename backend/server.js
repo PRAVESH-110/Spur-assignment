@@ -1,21 +1,28 @@
-const express = require('express')
+import express from "express";
+import dotenv from "dotenv";
+import chatRoutes from "./routes/chat.routes.js";
+import cors from "cors";
+import dbConnect from "./config/db.js";
 
-const dbConnect= require('/config/db');
+dotenv.config();
 
-const app=express();
+const app = express();
+
 app.use(express.json());
+app.use(cors());
+app.use("/api/chat", chatRoutes);
 
-async function server(){
-    try{
+async function server() {
+    try {
         await dbConnect();
-        console.log("connected to db");
-        app.listen(3000,()=>{
-            res.json("listening on port 3000")
+        app.listen(3000, () => {
+            console.log("listening on port 3000");
         })
 
     }
-    catch(err){
-        console.err("failed to connect to server",err);
+    catch (err) {
+        console.error("failed to connect to server", err);
     }
 }
-module.exports={server};
+server();
+export default app;
