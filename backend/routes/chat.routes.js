@@ -1,6 +1,6 @@
 import express from "express";
 import { ChatOpenAI } from "@langchain/openai";
-
+import Chat from "../models/chat.model.js";
 const router = express.Router();
 
 router.post('/', async (req, res) => {
@@ -23,7 +23,14 @@ router.post('/', async (req, res) => {
       { role: "user", content: message }
     ]);
 
+    const chat = new Chat({
+      message,
+      response: response.content
+    });
+    await chat.save();
+
     res.json({ message: response.content });
+
   }
 
   catch (error) {
