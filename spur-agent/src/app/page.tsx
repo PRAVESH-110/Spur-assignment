@@ -34,7 +34,8 @@ export default function ChatPage() {
     setInput("");
 
     try {
-      const response = await fetch("http://localhost:3000/api/chat", {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
+      const response = await fetch(`${backendUrl}/api/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -51,11 +52,11 @@ export default function ChatPage() {
         ...prevMessages,
         { sender: "bot", message: data.message },
       ]);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to send message:", error);
       setMessages((prevMessages) => [
         ...prevMessages,
-        { sender: "bot", message: "Sorry, something went wrong. Please try again." },
+        { sender: "bot", message: `Error: ${error.message || "Something went wrong"}` },
       ]);
     }
 
