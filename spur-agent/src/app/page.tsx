@@ -9,6 +9,8 @@ interface Message {
 
 export default function ChatPage() {
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingStatus, setLoadingStatus] = useState("Thinking...");
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: "bot",
@@ -32,6 +34,14 @@ export default function ChatPage() {
 
     setMessages((prev) => [...prev, { sender: "user", message: input }]);
     setInput("");
+
+    setIsLoading(true);
+    setLoadingStatus("Thinking...");
+
+    // Timer to update message if it takes too long (e.g. cold start)
+    const timeoutId = setTimeout(() => {
+      setLoadingStatus("Waking up the server...");
+    }, 3000);
 
     try {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
@@ -58,6 +68,9 @@ export default function ChatPage() {
         ...prevMessages,
         { sender: "bot", message: `Error: ${error.message || "Something went wrong"}` },
       ]);
+    } finally {
+      clearTimeout(timeoutId);
+      setIsLoading(false);
     }
 
   };
@@ -80,6 +93,11 @@ export default function ChatPage() {
               {message.message}
             </div>
           ))}
+          {isLoading && (
+            <div className="message bot-message loading-message">
+              <span className="animate-pulse">{loadingStatus}</span>
+            </div>
+          )}
           <div ref={messagesEndRef} />
         </div>
 
